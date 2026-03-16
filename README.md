@@ -17,7 +17,7 @@ The agent works inside a timeline-based workspace alongside the user -- not behi
 - **Gemini 3.1 Pro** -- Creative direction, planning, tool use, multimodal inspection
 - **Gemini 3 Pro Image** -- Characters, storyboard frames, environments, cinematic assets
 - **Veo 3.1** -- Video generation from storyboard frames
-- **Lyria** -- Background music generation
+- **Lyria 2** -- Background music generation
 
 ---
 
