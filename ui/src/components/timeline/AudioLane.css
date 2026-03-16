@@ -1,0 +1,117 @@
+/* Audio track lane -- bottom of timeline, below scene lanes */
+
+.audio-lane {
+  margin-top: 8px;
+  border-top: 1px solid var(--border-subtle, #e0e0e0);
+  padding-top: 8px;
+}
+
+.audio-lane-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.audio-lane-toggle {
+  font-size: 8px;
+  opacity: 0.5;
+}
+
+.audio-lane-count {
+  background: var(--accent-muted, #e8e0ff);
+  color: var(--accent, #7c3aed);
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 8px;
+}
+
+.audio-lane-tracks {
+  display: flex;
+  gap: 10px;
+  padding: 6px 8px;
+  overflow-x: auto;
+}
+
+.audio-lane-empty {
+  font-size: 11px;
+  color: var(--text-tertiary, #999);
+  padding: 12px 0;
+}
+
+.audio-track-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 200px;
+  max-width: 280px;
+  padding: 8px;
+  background: var(--card-bg, #fafafa);
+  border: 1px solid var(--border-subtle, #e8e8e8);
+  border-radius: 6px;
+}
+
+.audio-track-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.audio-track-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-primary, #333);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.audio-track-duration {
+  font-size: 10px;
+  color: var(--text-tertiary, #999);
+}
+
+.audio-track-player {
+  width: 100%;
+  height: 28px;
+}
+
+.audio-track-player::-webkit-media-controls-panel {
+  background: var(--card-bg, #f5f5f5);
+}
+
+.audio-track-generating {
+  font-size: 10px;
+  color: var(--text-tertiary, #999);
+  padding: 6px 0;
+}
+
+.audio-track-delete {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-tertiary, #999);
+  opacity: 0;
+  transition: opacity 0.15s;
+  padding: 2px;
+}
+
+.audio-track-card:hover .audio-track-delete {
+  opacity: 0.7;
+}
+
+.audio-track-delete:hover {
+  opacity: 1 !important;
+  color: var(--error, #ef4444);
+}

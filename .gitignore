@@ -1,0 +1,30 @@
+# Environment and secrets
+.env
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Node
+ui/node_modules/
+ui/dist/
+
+# Build artifacts
+version.txt
+nul
+bash.exe.stackdump
+
+# Internal tooling
+.claude/
+CLAUDE.md
+scripts/
+recovery/
+tools/
+docs/*.html
+docs/node_modules/
+test_*.py

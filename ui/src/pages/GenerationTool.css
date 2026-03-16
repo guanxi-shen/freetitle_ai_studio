@@ -1,0 +1,31 @@
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 15px 0;
+}
+
+.results-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.history-section {
+  margin-top: 20px;
+}
+
+.history-divider {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 10px 0;
+  border-top: 1px solid var(--border-color);
+  margin-bottom: 15px;
+}
+
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+}

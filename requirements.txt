@@ -1,0 +1,17 @@
+# Core
+fastapi==0.109.0
+uvicorn==0.27.0
+python-multipart==0.0.6
+python-dotenv==1.0.0
+requests==2.31.0
+pillow==10.2.0
+pyyaml
+
+# Google Cloud -- GenAI SDK (Vertex AI) for Gemini, Veo, Lyria + Cloud Storage
+google-genai
+google-auth
+google-cloud-storage==2.14.0
+firebase-admin
+
+# Video editing -- FFmpeg python bindings for post-production pipeline
+ffmpeg-python==0.2.0

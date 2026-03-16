@@ -1,0 +1,410 @@
+/* Sticky Note */
+.sticky-note {
+  position: absolute;
+  z-index: 5;
+  user-select: none;
+}
+
+.sticky-minimized {
+  cursor: pointer;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+  transition: filter 0.15s;
+}
+
+.sticky-minimized:hover {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+}
+
+.sticky-expanded {
+  min-width: 120px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+}
+
+.sticky-expanded.dragging {
+  opacity: 0.85;
+  cursor: grabbing;
+}
+
+.sticky-expanded.resizing {
+  opacity: 0.9;
+}
+
+/* Header: drag zone + controls */
+.sticky-header {
+  display: flex;
+  align-items: center;
+  padding: 4px 4px 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.sticky-expanded:hover .sticky-header {
+  opacity: 1;
+}
+
+.sticky-drag-zone {
+  flex: 1;
+  min-height: 16px;
+  cursor: grab;
+  overflow: hidden;
+}
+
+.sticky-drag-zone:active {
+  cursor: grabbing;
+}
+
+.sticky-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.sticky-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 3px;
+  border-radius: 4px;
+  color: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+}
+
+.sticky-btn:hover {
+  background: rgba(0,0,0,0.08);
+  color: rgba(0,0,0,0.6);
+}
+
+/* Color picker row */
+.sticky-color-picker {
+  display: flex;
+  gap: 4px;
+  padding: 4px 8px;
+  flex-shrink: 0;
+}
+
+.sticky-color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0,0,0,0.12);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.sticky-color-dot.active {
+  border-color: rgba(0,0,0,0.4);
+  transform: scale(1.15);
+}
+
+.sticky-color-dot:hover {
+  transform: scale(1.1);
+}
+
+/* Context label — absolutely positioned over text padding area */
+.sticky-context-label {
+  position: absolute;
+  top: 7px;
+  left: 10px;
+  right: 40px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 9px;
+  line-height: 1;
+  color: rgba(0,0,0,0.3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Body — holds text, grows to fill if height is set */
+.sticky-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Text content */
+.sticky-text {
+  font-family: 'Caveat', cursive;
+  font-size: 15px;
+  line-height: 1.4;
+  color: rgba(0,0,0,0.7);
+  cursor: text;
+  padding: 4px 10px 10px;
+  word-break: break-word;
+  min-height: 30px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.sticky-text-edit {
+  font-family: 'Caveat', cursive;
+  font-size: 15px;
+  line-height: 1.4;
+  color: rgba(0,0,0,0.7);
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  width: 100%;
+  height: 100%;
+  min-height: 30px;
+  box-sizing: border-box;
+  cursor: text;
+  padding: 4px 10px 10px;
+}
+
+/* Resize handles — invisible hit zones with cursor feedback */
+.sticky-resize-n { position: absolute; top: -3px; left: 6px; right: 6px; height: 6px; cursor: n-resize; z-index: 10; }
+.sticky-resize-s { position: absolute; bottom: -3px; left: 6px; right: 6px; height: 6px; cursor: s-resize; z-index: 10; }
+.sticky-resize-e { position: absolute; top: 6px; bottom: 6px; right: -3px; width: 6px; cursor: e-resize; z-index: 10; }
+.sticky-resize-w { position: absolute; top: 6px; bottom: 6px; left: -3px; width: 6px; cursor: w-resize; z-index: 10; }
+.sticky-resize-ne { position: absolute; top: -3px; right: -3px; width: 10px; height: 10px; cursor: ne-resize; z-index: 11; }
+.sticky-resize-nw { position: absolute; top: -3px; left: -3px; width: 10px; height: 10px; cursor: nw-resize; z-index: 11; }
+.sticky-resize-se { position: absolute; bottom: -3px; right: -3px; width: 10px; height: 10px; cursor: se-resize; z-index: 11; }
+.sticky-resize-sw { position: absolute; bottom: -3px; left: -3px; width: 10px; height: 10px; cursor: sw-resize; z-index: 11; }
+
+/* Note indicator icons for shot/char/supp */
+.shot-note-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-muted);
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.char-note-icon,
+.supp-note-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-muted);
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.char-note-icon {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 2;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+.supp-note-icon {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  z-index: 2;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+/* Scene header and lane header note icons */
+.scene-note-icon,
+.lane-note-icon,
+.row-note-icon {
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0 2px;
+  color: var(--text-muted);
+  opacity: 0.5;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.scene-note-icon:hover,
+.lane-note-icon:hover,
+.row-note-icon:hover {
+  opacity: 1;
+}
+
+.row-note-icon {
+  margin-left: 4px;
+}
+
+/* Note linkage lines SVG overlay */
+.note-links-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 4;
+}
+
+/* Note Input Panel */
+.note-input-panel {
+  position: fixed;
+  z-index: 50;
+  width: 260px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.06),
+    0 4px 24px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  animation: ctx-menu-in 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body.dark-mode .note-input-panel {
+  background: rgba(30, 30, 30, 0.85);
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.08),
+    0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.note-input-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 2px 6px;
+}
+
+.note-input-back {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.note-input-back:hover {
+  background: rgba(0,0,0,0.06);
+  color: var(--text-primary);
+}
+
+body.dark-mode .note-input-back:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.note-input-context {
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 0 4px 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-input-colors {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+}
+
+.note-color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0,0,0,0.12);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.note-color-dot.active {
+  border-color: rgba(0,0,0,0.4);
+  transform: scale(1.15);
+}
+
+body.dark-mode .note-color-dot {
+  border-color: rgba(255,255,255,0.15);
+}
+
+body.dark-mode .note-color-dot.active {
+  border-color: rgba(255,255,255,0.5);
+}
+
+.note-input-submit {
+  border: none;
+  background: rgba(0,0,0,0.06);
+  color: var(--text-primary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.note-input-submit:hover {
+  background: rgba(0,0,0,0.1);
+}
+
+.note-input-submit:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+body.dark-mode .note-input-submit {
+  background: rgba(255,255,255,0.08);
+}
+
+body.dark-mode .note-input-submit:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+.note-input-text {
+  font-family: 'Caveat', cursive;
+  font-size: 15px;
+  line-height: 1.4;
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  outline: none;
+  resize: none;
+  padding: 4px 6px;
+}
+
+.note-input-text::placeholder {
+  color: var(--text-muted);
+}
+
+/* Notes toggle button in toolbar */
+.notes-toggle-btn {
+  position: relative;
+}
+
+.notes-toggle-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 7px;
+  background: var(--text-secondary);
+  color: var(--bg-primary, #fff);
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+body.dark-mode .notes-toggle-badge {
+  background: var(--text-secondary);
+  color: var(--bg-primary, #1a1a1a);
+}

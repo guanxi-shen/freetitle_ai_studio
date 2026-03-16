@@ -1,0 +1,95 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+      - test
+
+jobs:
+  deploy:
+    name: Deploy to Cloud Run
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: ${{ secrets.CREDENTIALS_DICT }}
+
+    - name: Set up Cloud SDK
+      uses: 'google-github-actions/setup-gcloud@v2'
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+    - name: Configure GCS bucket CORS
+      run: |
+        cat > cors.json << 'EOF'
+        [{"origin": ["*"], "method": ["GET"], "responseHeader": ["Content-Type"], "maxAgeSeconds": 3600}]
+        EOF
+        gsutil cors set cors.json gs://${{ secrets.BUCKET_NAME }}
+
+    - name: Set environment
+      run: |
+        if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          echo "SERVICE_NAME=${{ secrets.SERVICE_NAME_PROD }}" >> $GITHUB_ENV
+          echo "ENV_LABEL=PRODUCTION" >> $GITHUB_ENV
+        else
+          echo "SERVICE_NAME=${{ secrets.SERVICE_NAME_TEST }}" >> $GITHUB_ENV
+          echo "ENV_LABEL=TEST" >> $GITHUB_ENV
+        fi
+
+    - name: Generate version timestamp
+      run: |
+        TIMESTAMP=$(TZ='America/Los_Angeles' date '+%Y-%m-%d %I:%M %p PST')
+        if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+          echo "dev $TIMESTAMP" > version.txt
+        else
+          echo "$TIMESTAMP" > version.txt
+        fi
+
+    - name: Deploy to Cloud Run
+      run: |
+        cat > env-vars.yaml << EOF
+        GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+        PUBLIC_BUCKET_NAME: ${{ secrets.PUBLIC_BUCKET_NAME }}
+        credentials_dict: '${{ secrets.CREDENTIALS_DICT }}'
+        EOF
+
+        echo "Deploying $SERVICE_NAME to $ENV_LABEL..."
+
+        gcloud run deploy $SERVICE_NAME \
+          --source . \
+          --platform managed \
+          --region us-central1 \
+          --allow-unauthenticated \
+          --port 8080 \
+          --memory 3Gi \
+          --cpu 2 \
+          --min-instances 1 \
+          --max-instances 5 \
+          --concurrency 20 \
+          --timeout 600 \
+          --execution-environment gen2 \
+          --session-affinity \
+          --env-vars-file env-vars.yaml \
+          --verbosity=info 2>&1 | tee deploy.log
+
+        if [ ${PIPESTATUS[0]} -ne 0 ]; then
+          echo "Deployment failed!"
+          BUILD_ID=$(gcloud builds list --limit=1 --format="value(id)")
+          gcloud builds log $BUILD_ID || true
+          exit 1
+        fi
+
+        echo "Deployment completed"
+
+    - name: Get Service URL
+      run: |
+        SERVICE_URL=$(gcloud run services describe $SERVICE_NAME --region=us-central1 --format='value(status.url)')
+        echo "Deployed to $ENV_LABEL: $SERVICE_URL"

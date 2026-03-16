@@ -1,0 +1,162 @@
+/* Edited video lane -- very bottom of timeline, final output display */
+
+.edited-video-lane {
+  margin-top: 8px;
+  border-top: 1px solid var(--border-subtle, #e0e0e0);
+  padding-top: 8px;
+}
+
+.edited-video-lane-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.edited-video-toggle {
+  font-size: 8px;
+  opacity: 0.5;
+}
+
+.edited-video-count {
+  background: var(--accent-muted, #dbeafe);
+  color: var(--accent-blue, #2563eb);
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 8px;
+}
+
+.edited-video-cards {
+  display: flex;
+  gap: 12px;
+  padding: 6px 8px;
+  overflow-x: auto;
+}
+
+.edited-video-empty {
+  font-size: 11px;
+  color: var(--text-tertiary, #999);
+  padding: 12px 0;
+}
+
+.edited-video-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+  max-width: 240px;
+  background: var(--card-bg, #fafafa);
+  border: 1px solid var(--border-subtle, #e8e8e8);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.edited-video-player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  cursor: pointer;
+}
+
+.edited-video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.edited-video-play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.25);
+  transition: background 0.15s;
+}
+
+.edited-video-player:hover .edited-video-play-overlay {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.edited-video-generating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 10px;
+  color: #999;
+}
+
+.edited-video-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 4px 8px 6px;
+}
+
+.edited-video-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-primary, #333);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.edited-video-details {
+  font-size: 9px;
+  color: var(--text-tertiary, #999);
+}
+
+.edited-video-download {
+  position: absolute;
+  bottom: 6px;
+  right: 24px;
+  color: var(--text-tertiary, #999);
+  opacity: 0;
+  transition: opacity 0.15s;
+  padding: 2px;
+}
+
+.edited-video-card:hover .edited-video-download {
+  opacity: 0.7;
+}
+
+.edited-video-download:hover {
+  opacity: 1 !important;
+  color: var(--accent, #7c3aed);
+}
+
+.edited-video-delete {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.15s;
+  padding: 3px;
+  z-index: 2;
+}
+
+.edited-video-card:hover .edited-video-delete {
+  opacity: 0.7;
+}
+
+.edited-video-delete:hover {
+  opacity: 1 !important;
+  background: var(--error, #ef4444);
+}
